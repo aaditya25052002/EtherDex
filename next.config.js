@@ -1,4 +1,16 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        ws: false,
+        fs: false,
+        net: false,
+      };
+    }
 
-module.exports = nextConfig
+    return config;
+  },
+};
+
+module.exports = nextConfig;
