@@ -38,8 +38,8 @@ const Account = () => {
   }, []);
 
   return (
-    <div className="flex items-center justify-center w-full h-screen text-white">
-      <div style={{ width: "50vw", height: "50vh" }}>
+    <div className="flex flex-col items-center justify-center w-full h-screen text-white">
+      <div className="w-full sm:w-3/4 md:w-1/2 lg:w-2/3 xl:w-1/2 max-w-2xl">
         <CChart
           type="bar"
           data={{
@@ -49,15 +49,24 @@ const Account = () => {
                 label: "User Wallet Stats",
                 backgroundColor: "#7E22CE",
                 data: [
-                  parseFloat(cdBalance),
-                  parseFloat(ethBalance),
-                  parseFloat(lpBalance),
+                  parseFloat(utils.formatEther(cdBalance)),
+                  parseFloat(utils.formatEther(ethBalance)),
+                  parseFloat(utils.formatEther(lpBalance)),
                 ],
               },
             ],
           }}
           labels="months"
         />
+      </div>
+      <div className="text-1xl text-center mt-8">
+        <h1 className="text-1xl">Ehtereum: {utils.formatEther(ethBalance)}</h1>
+        <h1 className="text-1xl">
+          Crypto Devs: {utils.formatEther(cdBalance)}
+        </h1>
+        <h1 className="text-1xl">
+          Liquidity Provider Tokens: {utils.formatEther(lpBalance)}
+        </h1>
       </div>
     </div>
   );

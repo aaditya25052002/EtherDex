@@ -6,6 +6,7 @@ import { BigNumber, providers, utils } from "ethers";
 import { useSelector } from "react-redux";
 import { addLiquidity } from "@/utils/addLiquidity";
 import { removeLiquidity } from "@/utils/removeLiquidity";
+import useMediaQuery from "@/hooks/useMediaquery";
 import {
   getCDTokensBalance,
   getEtherBalance,
@@ -22,6 +23,7 @@ const AddRemoveLiquidity = () => {
   const [lpBalance, setLPBalance] = useState(zero);
   const [etherBalanceContract, setEtherBalanceContract] = useState(zero);
   const [reservedCD, setReservedCD] = useState(zero);
+  const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const signer = useSelector((state) => state.providerOrSigner);
   const provider = useSelector((state) => state.provider);
   const address = useSelector((state) => state.address);
@@ -75,7 +77,6 @@ const AddRemoveLiquidity = () => {
           placeholder="Add Ether"
           _placeholder={{ color: "white" }}
           size="lg"
-          mr={2}
           onChange={(e) => setFunc1(e.target.value || "0")}
         />
         <div className="border-l-2 border-purple-500 my-2"></div>
@@ -86,7 +87,6 @@ const AddRemoveLiquidity = () => {
           placeholder="Add CD"
           _placeholder={{ color: "white" }}
           size="lg"
-          mr={2}
           onChange={(e) => setFunc2(e.target.value || "0")}
         />
       </div>
@@ -123,66 +123,71 @@ const AddRemoveLiquidity = () => {
             </Button>
           </form>
         </div>
-        <div className="flex items-center justify-center flex-col text-white w-full sm:w-1/2 h-1/2 sm:h-full">
-          <h1 className="text-1xl text-center">Add Liquidity</h1>
-          <form className="flex">
+        <div className="w-full">
+          <div className="flex items-center justify-center flex-col text-white mx-8 sm:mx-0 my-8 sm:my-0">
+            <h1 className="text-1xl text-center">Add Liquidity</h1>
+
             {utils.parseEther(reservedCD.toString()).eq(zero) ? (
               <div className="flex">
-                <DualInput setFunc1={setAddEther} setFunc2={setAddCDTokens} />
+                <form className="flex flex-col sm:flex-row">
+                  <DualInput setFunc1={setAddEther} setFunc2={setAddCDTokens} />
 
-                <Button
-                  colorScheme="purple"
-                  size="lg"
-                  ml={4}
-                  _hover={{ bg: "purple.600" }}
-                  _active={{ bg: "purple.700" }}
-                  onClick={_addLiquidity}
-                >
-                  Add
-                </Button>
+                  <Button
+                    colorScheme="purple"
+                    size="lg"
+                    _hover={{ bg: "purple.600" }}
+                    _active={{ bg: "purple.700" }}
+                    onClick={_addLiquidity}
+                    ml={1}
+                  >
+                    Add
+                  </Button>
+                </form>
               </div>
             ) : (
               <div>
-                <Input
-                  variant="outlinedx"
-                  bg="transparent"
-                  border="2px"
-                  borderColor="purple.500"
-                  color="white"
-                  placeholder="Enter your text"
-                  _placeholder={{ color: "white" }}
-                  //  _hover={{ bg: "purple.500" }}
-                  //  _focus={{ bg: "purple.500" }}
-                  size="lg"
-                  mb={4}
-                  mr={2}
-                  onChange={async (e) => {
-                    setAddEther(e.target.value || "0");
-                    // calculate the number of CD tokens that
-                    // can be added given  `e.target.value` amount of Eth
-                    const _addCDTokens = await calculateCD(
-                      e.target.value || "0",
-                      etherBalanceContract,
-                      reservedCD
-                    );
-                    setAddCDTokens(_addCDTokens);
-                  }}
-                />
-                <Button
-                  colorScheme="purple"
-                  size="lg"
-                  _hover={{ bg: "purple.600" }}
-                  _active={{ bg: "purple.700" }}
-                  onClick={_addLiquidity}
-                >
-                  Add
-                </Button>
+                <form className="flex flex-col sm:flex-row">
+                  <Input
+                    variant="outlinedx"
+                    bg="transparent"
+                    border="2px"
+                    borderColor="purple.500"
+                    color="white"
+                    placeholder="Enter your text"
+                    _placeholder={{ color: "white" }}
+                    //  _hover={{ bg: "purple.500" }}
+                    //  _focus={{ bg: "purple.500" }}
+                    size="lg"
+                    mb={4}
+                    mr={2}
+                    onChange={async (e) => {
+                      setAddEther(e.target.value || "0");
+                      // calculate the number of CD tokens that
+                      // can be added given  `e.target.value` amount of Eth
+                      const _addCDTokens = await calculateCD(
+                        e.target.value || "0",
+                        etherBalanceContract,
+                        reservedCD
+                      );
+                      setAddCDTokens(_addCDTokens);
+                    }}
+                  />
+                  <Button
+                    colorScheme="purple"
+                    size="lg"
+                    _hover={{ bg: "purple.600" }}
+                    _active={{ bg: "purple.700" }}
+                    onClick={_addLiquidity}
+                  >
+                    Add
+                  </Button>
+                </form>
               </div>
             )}
-          </form>
+          </div>
         </div>
       </div>
-      <div className="flex items-center justify-center w-full h-screen">
+      <div className="flex items-center justify-center w-full h-screen -mt-64 sm:-mt-32">
         <div style={{ width: "350px" }} className="mx-auto sm:mx-0">
           <CChart
             type="doughnut"

@@ -8,10 +8,12 @@ import {
   getLPTokensBalance,
   getReserveOfCDTokens,
 } from "@/utils/getAmount";
+import useMediaQuery from "@/hooks/useMediaquery";
 
 import { swapTokens, getAmountOfTokensReceivedFromSwap } from "@/utils/swaps";
 
 const MyComponent = () => {
+  const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const [inputValue, setInputValue] = useState("");
   const [ethSelected, setEthSelected] = useState(false);
   const zero = BigNumber.from(0);
@@ -26,27 +28,26 @@ const MyComponent = () => {
   const signer = useSelector((state) => state.providerOrSigner);
   const provider = useSelector((state) => state.provider);
 
-  const handleButtonClick1 = async() => {
+  const handleButtonClick1 = async () => {
     // Function for button 1
     setEthSelected(true);
     await _swapTokens();
     setInputValue(""); // Reset the input field
   };
 
-  const handleButtonClick2 = async() => {
+  const handleButtonClick2 = async () => {
     // Function for button 2
     setEthSelected(false);
     await _swapTokens();
     setInputValue(""); // Reset the input field
   };
 
-  const handleInputChange = async(e) => {
+  const handleInputChange = async (e) => {
     // Function to update the input value
-    
-      setInputValue(e.target.value || "");
-      // Calculate the amount of tokens user would receive after the swap
-      await _getAmountOfTokensReceivedFromSwap(e.target.value || "0");
-  
+
+    setInputValue(e.target.value || "");
+    // Calculate the amount of tokens user would receive after the swap
+    await _getAmountOfTokensReceivedFromSwap(e.target.value || "0");
   };
 
   const getAmounts = async () => {
@@ -120,13 +121,17 @@ const MyComponent = () => {
     getAmounts();
   }, []);
 
-  return (
+  return isNonMobileScreens ? (
     <div
       className="flex h-screen"
       style={{ marginTop: "-10%", marginBottom: "-25%" }}
     >
       <div className="w-1/2 flex items-center text-white justify-center flex-col">
         <Flex direction="column" align="center">
+          <h6 className="text-1xl text-center">
+            Your Money is with you, Swap Whenerever you want! <br></br>{" "}
+            Remember: Not your keys not your coins!
+          </h6>
           <Input
             value={inputValue}
             variant="outlinedx"
@@ -152,7 +157,7 @@ const MyComponent = () => {
               onClick={handleButtonClick1}
               mr={2}
             >
-              Eth
+              Ethereum
             </Button>
             <Button
               colorScheme="purple"
@@ -162,7 +167,7 @@ const MyComponent = () => {
               onClick={handleButtonClick2}
               ml={2}
             >
-              CD
+              Crypto Dev Token
             </Button>
           </div>
         </Flex>
@@ -174,6 +179,62 @@ const MyComponent = () => {
           alt="Image"
         />
       </div>
+      <h1 className="text-1xl text-center text-white">
+        {/* Convert the BigNumber to string using the formatEther function from ethers.js */}
+        {ethSelected
+          ? `You will get ${utils.formatEther(
+              tokenToBeReceivedAfterSwap
+            )} Crypto Dev Tokens`
+          : `You will get ${utils.formatEther(tokenToBeReceivedAfterSwap)} Eth`}
+      </h1>
+    </div>
+  ) : (
+    <div className="flex items-center text-white justify-center flex-col mt-32 mr-8 ml-8">
+      {/* Left-hand side with image */}
+      <h6 className="text-1xl text-center">
+        Your Money is with you, Swap Whenerever you want! <br></br> Remember:
+        Not your keys not your coins!
+      </h6>
+      <Flex direction="column" align="center">
+        <Input
+          value={inputValue}
+          variant="outlinedx"
+          bg="transparent"
+          border="2px"
+          borderColor="purple.500"
+          color="white"
+          placeholder="Enter the amount to swap"
+          _placeholder={{ color: "white" }}
+          onChange={handleInputChange}
+          //  _hover={{ bg: "purple.500" }}
+          //  _focus={{ bg: "purple.500" }}
+          size="lg"
+          width="100%"
+          m={4}
+        />
+        <div className="flex justify-center items-center">
+          <Button
+            colorScheme="purple"
+            size="lg"
+            _hover={{ bg: "purple.600" }}
+            _active={{ bg: "purple.700" }}
+            onClick={handleButtonClick1}
+            mr={2}
+          >
+            Eth
+          </Button>
+          <Button
+            colorScheme="purple"
+            size="lg"
+            _hover={{ bg: "purple.600" }}
+            _active={{ bg: "purple.700" }}
+            onClick={handleButtonClick2}
+            ml={2}
+          >
+            CD
+          </Button>
+        </div>
+      </Flex>
     </div>
   );
 };
